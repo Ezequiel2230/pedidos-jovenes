@@ -1,2 +1,2 @@
 # pedidos-jovenes
-que los clientes puedan tener mejor acceso a sus pedidos
+pagina para hacer sus pedidos via WhatsApp
