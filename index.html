@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pedidos | Jóvenes Embajadores de Cristo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef1f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 430px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    }
+    .logo {
+      display: block;
+      margin: 0 auto 10px;
+      max-width: 120px;
+    }
+    h1, h2 {
+      text-align: center;
+      margin: 0;
+    }
+    h1 { color: #0a1f44; font-size: 22px; }
+    h2 { color: #555; font-size: 14px; margin-bottom: 20px; }
+
+    label { font-weight: bold; font-size: 14px; color: #0a1f44; }
+    input, textarea { width: 100%; padding: 10px; margin: 8px 0 15px; border-radius: 6px; border: 1px solid #ccc; }
+    .radio, .checks { font-size: 14px; margin-bottom: 15px; }
+    button { width: 100%; padding: 12px; background: #0a1f44; color: #fff; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 10px; }
+    .total, .resumen { font-weight: bold; color: #0a1f44; margin-bottom: 10px; }
+    .mapa { display: none; text-align: center; margin-bottom: 15px; }
+    .mapa a { color: #0a1f44; text-decoration: underline; font-size: 14px; }
+    .biblia { text-align: center; font-size: 12px; color: #555; margin-top: 15px; font-style: italic; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- LOGO -->
+  <img src="Logo.jpeg" class="logo">
+
+  <h1>Jóvenes Embajadores de Cristo</h1>
+  <h2>Misión Cristiana Príncipe de Paz</h2>
+
+  <label>Nombre *</label>
+  <input id="nombre">
+
+  <label>Tipo de pedido *</label>
+  <div class="radio">
+    <input type="radio" name="tipo" value="Envío a domicilio" checked onclick="envio()"> Envío 🚚<br>
+    <input type="radio" name="tipo" value="Recoger pedido" onclick="recoger()"> Recoger 🏠
+  </div>
+
+  <label>Dirección</label>
+  <textarea id="direccion"></textarea>
+
+  <div class="mapa" id="mapa">
+    📍 <a href="#" target="_blank" id="linkMapa">Ver ubicación en Google Maps</a>
+  </div>
+
+  <label>Cantidad de Hot Dogs 🌭 *</label>
+  <input type="number" id="cantidad" min="1" oninput="calcular()">
+
+  <div class="total" id="total">Total: $0.00</div>
+
+  <label>Extras / Personalización</label>
+  <div class="checks">
+    <input type="checkbox" value="Extra mostaza"> Extra mostaza<br>
+    <input type="checkbox" value="Extra ketchup"> Extra ketchup<br>
+    <input type="checkbox" value="Solo queso"> Solo queso<br>
+    <input type="checkbox" value="Sin mostaza"> Sin mostaza<br>
+    <input type="checkbox" value="Sin ketchup"> Sin ketchup
+  </div>
+
+  <input id="otroExtra" placeholder="Otro extra (opcional)">
+
+  <label>Teléfono *</label>
+  <input id="telefono">
+
+  <div class="resumen" id="resumen"></div>
+
+  <button onclick="enviar()">Enviar pedido por WhatsApp</button>
+
+  <div class="biblia">
+    “Y todo lo que hagáis, hacedlo de corazón, como para el Señor.”<br>
+    Colosenses 3:23
+  </div>
+
+</div>
+
+<script>
+const precio = 10.00;
+
+// 🔴 CAMBIA ESTO: DIRECCIÓN DE LA CASA DE RECOGIDA
+const direccionCasa = "Casa de recogida: 75E plaza st NE apto 302"; 
+
+// 🔴 CAMBIA ESTO: LINK DE GOOGLE MAPS (opcional)
+const linkMaps = "https://maps.app.goo.gl/dnc9iE47ohpN8mgo6";
+
+// 🔴 CAMBIA ESTO: TU NÚMERO DE WHATSAPP (EE.UU.)
+const numero = "14698186341"; // +1 y tu número completo
+
+function recoger() {
+  direccion.value = direccionCasa;
+  direccion.disabled = true;
+  mapa.style.display = "block";
+  linkMapa.href = linkMaps;
+}
+
+function envio() {
+  direccion.value = "";
+  direccion.disabled = false;
+  mapa.style.display = "none";
+}
+
+function calcular() {
+  const c = cantidad.value;
+  total.innerText = "Total: $" + (c ? (c * precio).toFixed(2) : "0.00");
+}
+
+function enviar() {
+  if (!nombre.value || !cantidad.value || !telefono.value) {
+    alert("Completa los campos obligatorios 🙏");
+    return;
+  }
+
+  let extras = [];
+  document.querySelectorAll('.checks input:checked').forEach(e => extras.push(e.value));
+  if (otroExtra.value) extras.push(otroExtra.value);
+  extras.push("incluye soda");
+
+  resumen.innerText =
+    `Resumen: ${cantidad.value} Hot Dogs | Extras: ${extras.join(", ") || "Ninguno"}`;
+
+  const mensaje =
+    `*Pedido - Jóvenes Embajadores de Cristo*%0A` +
+    `Nombre: ${nombre.value}%0A` +
+    `Tipo: ${document.querySelector('input[name="tipo"]:checked').value}%0A` +
+    `Dirección: ${direccion.value}%0A` +
+    `Cantidad: ${cantidad.value}%0A` +
+    `Extras: ${extras.join(", ") || "Ninguno"}%0A` +
+    `Teléfono: ${telefono.value}`;
+
+  window.open(`https://wa.me/${numero}?text=${mensaje}`, "_blank");
+}
+</script>
+
+</body>
+</html>
